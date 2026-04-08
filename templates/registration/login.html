@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="glass-panel main-panel">
+    <div class="header">
+        <h1>Welcome <span>Back</span></h1>
+        <p>Return to your behavior analysis environment.</p>
+    </div>
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="primary-btn" style="margin-top: 1rem;">Log In</button>
+    </form>
+    <p style="margin-top: 1rem; text-align: center; color: var(--text-secondary);">
+        Don't have an account? <a href="{% url 'register' %}" style="color: var(--accent-1);">Register here</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="glass-panel main-panel" style="max-width: 900px; width: 100%; margin-top: 4rem;">
+    <div class="header">
+        <h1>Behavioral <span>History</span></h1>
+        <p>Review your personal prediction timeline.</p>
+    </div>
+    
+    <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+        <canvas id="predictionChart" height="100"></canvas>
+    </div>
+
+    <div class="history-list" style="max-height: 400px; overflow-y: auto; padding-right: 10px;">
+        {% for entry in user_inputs %}
+        <div class="result-card">
+            <h3 style="margin-bottom: 10px; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">
+                {{ entry.created_at|date:"M d, Y - H:i" }}
+            </h3>
+            <p style="color: var(--accent-1);"><strong>Prediction:</strong> {{ entry.predicted_state }}</p>
+            <p style="font-size: 1rem; margin-top: 5px;"><strong>Input:</strong> {{ entry.current_intent }}</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 10px;">Context: {{ entry.device_type|default:"Unknown" }} / {{ entry.os|default:"Unknown" }} / {{ entry.weather|default:"No Weather" }} at {{ entry.temperature|default:"--" }}°C</p>
+        </div>
+        {% empty %}
+        <p style="text-align: center; color: var(--text-secondary);">No history yet! Go to the Predict tab to run your first model.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+/* Custom Scrollbar for history list */
+.history-list::-webkit-scrollbar { width: 8px; }
+.history-list::-webkit-scrollbar-track { background: var(--glass-bg); border-radius: 4px; }
+.history-list::-webkit-scrollbar-thumb { background: var(--accent-2); border-radius: 4px; }
+</style>
+
+<script>
+    const ctx = document.getElementById('predictionChart').getContext('2d');
+    
+    // Safely parse JSON injected from views.py
+    const rawData = JSON.parse('{{ chart_data|escapejs }}');
+    
+    const stateMap = {
+        "Low Energy / Rest Needed": 1,
+        "Creative Flow / Distracted": 2,
+        "High Motivation / Energetic": 3
+    };
+    
+    const labels = rawData.map(d => d.date);
+    const dataPoints = rawData.map(d => stateMap[d.state] || 1);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Motivation Level',
+                data: dataPoints,
+                borderColor: '#8b5cf6',
+                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#ec4899',
+                pointRadius: 6
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 4,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: {
+                        color: '#94a3b8',
+                        callback: function(value) {
+                            if(value === 1) return 'Low Energy';
+                            if(value === 2) return 'Creative';
+                            if(value === 3) return 'Highly Motivated';
+                            return '';
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+{% endblock %}
