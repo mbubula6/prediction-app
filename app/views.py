@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import PredictionForm
-import time
+from .ml_pipeline import get_prediction
 
 def index(request):
     form = PredictionForm()
@@ -10,16 +10,34 @@ def predict(request):
     if request.method == "POST":
         form = PredictionForm(request.POST)
         if form.is_valid():
-            # In a real app, you'd pass form.cleaned_data to ML Pipeline
-            # For now, simulate delay and return dummy prediction
-            time.sleep(1) # Simulate ML overhead
-            
             user_input = form.save(commit=False)
             
-            # Dummy predictions
-            user_input.predicted_state = "High Motivation / Energetic"
-            user_input.suggested_action = "Tackle a challenging task or exercise"
-            user_input.forecast_1hr = "Likely to feel accomplished and relaxed"
+            # Simple feature hashing for Dummy ML
+            def mock_hash(string_val):
+                return (hash(str(string_val)) % 100) / 100.0
+                
+            features = [
+                mock_hash(user_input.current_intent),
+                mock_hash(user_input.sleep_quality),
+                mock_hash(user_input.previous_action),
+                mock_hash(user_input.action_3_hours_ago),
+                mock_hash(user_input.gender)
+            ]
+            
+            # Use random forest by default
+            prediction_class = get_prediction('random_forest', features)
+            
+            outcomes = {
+                0: {"state": "Low Energy / Rest Needed", "action": "Take a 20-min break or read a book.", "forecast": "Likely to feel lethargic if forced to work."},
+                1: {"state": "High Motivation / Energetic", "action": "Tackle a challenging analytical task.", "forecast": "High productivity and deep focus."},
+                2: {"state": "Creative Flow / Distracted", "action": "Brainstorm ideas or organize your thoughts.", "forecast": "Bursts of insight but easily derailed."}
+            }
+            
+            outcome = outcomes.get(prediction_class, outcomes[0])
+            
+            user_input.predicted_state = outcome["state"]
+            user_input.suggested_action = outcome["action"]
+            user_input.forecast_1hr = outcome["forecast"]
             user_input.save()
             
             context = {
