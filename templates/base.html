@@ -12,24 +12,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}?v=1.2">
 </head>
 <body x-data="{ lightMode: localStorage.getItem('theme') === 'light' }" 
       x-init="$watch('lightMode', val => localStorage.setItem('theme', val ? 'light' : 'dark'))"
       :class="{ 'light-mode': lightMode }">
     
-    <button @click="lightMode = !lightMode" class="theme-toggle">
-        <span x-show="!lightMode">☀️ Light Mode</span>
-        <span x-show="lightMode" style="display:none;">🌙 Dark Mode</span>
-    </button>
-    
     <nav class="nav-bar">
         <div class="nav-brand">🧠 BehavioGraph</div>
         <div class="nav-links">
+            <button @click="lightMode = !lightMode" class="theme-toggle">
+                <span x-show="!lightMode">☀️ Light Mode</span>
+                <span x-show="lightMode" style="display:none;">🌙 Dark Mode</span>
+            </button>
             {% if user.is_authenticated %}
                 <a href="{% url 'index' %}">Predict</a>
                 <a href="{% url 'history' %}">History</a>
-                <a href="{% url 'logout' %}" style="margin-left: 1rem; color: var(--accent-3);">Logout ({{ user.username }})</a>
+                <a href="{% url 'logout' %}" class="logout-link">Logout ({{ user.username }})</a>
             {% else %}
                 <a href="{% url 'login' %}">Login</a>
                 <a href="{% url 'register' %}">Sign Up</a>
