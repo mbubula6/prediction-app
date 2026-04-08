@@ -3,6 +3,7 @@
 {% block content %}
 <div class="glass-panel main-panel" x-data="{ 
     submitting: false,
+    useGlobal: false,
     deviceType: window.innerWidth < 768 ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop'),
     browserInfo: navigator.userAgent.includes('Chrome') ? 'Chrome' : (navigator.userAgent.includes('Firefox') ? 'Firefox' : (navigator.userAgent.includes('Safari') ? 'Safari' : 'Other')),
     osInfo: navigator.platform || navigator.userAgent,
@@ -46,6 +47,13 @@
             <div class="form-group full-width">{{ form.action_3_hours_ago.label_tag }}{{ form.action_3_hours_ago }}</div>
             <div class="form-group">{{ form.sleep_quality.label_tag }}{{ form.sleep_quality }}</div>
             <div class="form-group">{{ form.preferences.label_tag }}{{ form.preferences }}</div>
+        </div>
+        
+        <div class="form-group full-width" style="margin-bottom: 1.5rem; text-align: center;">
+            <label style="display: inline-flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" name="use_global" value="true" x-model="useGlobal" style="margin-right: 10px; transform: scale(1.5);">
+                Mix my habits with others (Use Global ML Model)
+            </label>
         </div>
         
         <input type="hidden" name="device_type" :value="deviceType">
