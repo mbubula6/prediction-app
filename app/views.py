@@ -6,6 +6,7 @@ from .forms import PredictionForm
 from .models import UserInput
 from .ml_pipeline import get_prediction, retrain_models, mock_hash
 import threading
+import json
 
 @login_required(login_url='/login/')
 def index(request):
@@ -15,7 +16,13 @@ def index(request):
 @login_required(login_url='/login/')
 def history(request):
     user_inputs = UserInput.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'history.html', {'user_inputs': user_inputs})
+    
+    chart_data = [
+        {"date": entry.created_at.strftime("%b %d %H:%M"), "state": entry.predicted_state or "Unknown"}
+        for entry in reversed(user_inputs[:10])
+    ]
+    
+    return render(request, 'history.html', {'user_inputs': user_inputs, 'chart_data': json.dumps(chart_data)})
 
 @login_required(login_url='/login/')
 def predict(request):
