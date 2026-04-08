@@ -14,7 +14,15 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
-<body>
+<body x-data="{ lightMode: localStorage.getItem('theme') === 'light' }" 
+      x-init="$watch('lightMode', val => localStorage.setItem('theme', val ? 'light' : 'dark'))"
+      :class="{ 'light-mode': lightMode }">
+    
+    <button @click="lightMode = !lightMode" class="theme-toggle">
+        <span x-show="!lightMode">☀️ Light Mode</span>
+        <span x-show="lightMode" style="display:none;">🌙 Dark Mode</span>
+    </button>
+    
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     

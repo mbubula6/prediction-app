@@ -14,7 +14,9 @@ class PredictionForm(forms.ModelForm):
             'sleep_quality',
             'device_type',
             'browser',
-            'os'
+            'os',
+            'weather',
+            'temperature'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Your Name'}),
@@ -32,5 +34,7 @@ class PredictionForm(forms.ModelForm):
             ], attrs={'class': 'form-input'}),
             'device_type': forms.HiddenInput(),
             'browser': forms.HiddenInput(),
-            'os': forms.HiddenInput()
+            'os': forms.HiddenInput(),
+            'weather': forms.HiddenInput(),
+            'temperature': forms.HiddenInput()
         }

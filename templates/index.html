@@ -5,11 +5,35 @@
     submitting: false,
     deviceType: window.innerWidth < 768 ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop'),
     browserInfo: navigator.userAgent.includes('Chrome') ? 'Chrome' : (navigator.userAgent.includes('Firefox') ? 'Firefox' : (navigator.userAgent.includes('Safari') ? 'Safari' : 'Other')),
-    osInfo: navigator.platform || navigator.userAgent
+    osInfo: navigator.platform || navigator.userAgent,
+    weatherContext: 'fetching...',
+    temperatureContext: '',
+    init() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                fetch(`https://api.open-meteo.com/v1/forecast?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&current=temperature_2m,weather_code`)
+                .then(res => res.json())
+                .then(data => {
+                    this.temperatureContext = data.current.temperature_2m;
+                    let code = data.current.weather_code;
+                    if(code <= 3) this.weatherContext = 'Clear/Cloudy';
+                    else if(code <= 49) this.weatherContext = 'Fog/Drizzle';
+                    else if(code <= 69) this.weatherContext = 'Rain';
+                    else if(code <= 79) this.weatherContext = 'Snow';
+                    else this.weatherContext = 'Storm';
+                }).catch(() => this.weatherContext = 'Unavailable');
+            }, () => this.weatherContext = 'Location Denied');
+        } else {
+            this.weatherContext = 'Unsupported';
+        }
+    }
 }">
     <div class="header">
         <h1>Behavioral <span>Prediction</span></h1>
         <p>Analyze your cognitive context in real-time.</p>
+        <div class="weather-badge" x-show="temperatureContext" style="display:none;" x-transition>
+            <span x-text="temperatureContext + '°C'"></span> | <span x-text="weatherContext"></span>
+        </div>
     </div>
 
     <form hx-post="{% url 'predict' %}" hx-target="#result-container" hx-indicator="#loading" @submit="submitting = true" @htmx:after-request="submitting = false">
@@ -27,6 +51,8 @@
         <input type="hidden" name="device_type" :value="deviceType">
         <input type="hidden" name="browser" :value="browserInfo">
         <input type="hidden" name="os" :value="osInfo">
+        <input type="hidden" name="weather" :value="weatherContext">
+        <input type="hidden" name="temperature" :value="temperatureContext">
         
         <button type="submit" class="primary-btn" :class="{ 'loading': submitting }" :disabled="submitting">
             <span x-show="!submitting">Initialize Prediction</span>
