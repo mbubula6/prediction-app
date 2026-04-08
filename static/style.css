@@ -21,11 +21,12 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow-x: hidden;
-    padding: 2rem;
+    padding: 6rem 1rem 2rem 1rem;
 }
 
 /* Background Animated Blobs */
@@ -63,6 +64,7 @@ body {
     width: 100%;
     max-width: 800px;
     z-index: 1;
+    margin: auto 0;
 }
 
 /* Glassmorphism Panels */
@@ -286,7 +288,7 @@ label {
 
 /* Navigation Bar */
 .nav-bar {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -323,7 +325,7 @@ label {
 
 /* Theme Toggle Button */
 .theme-toggle {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
     background: var(--glass-bg);
