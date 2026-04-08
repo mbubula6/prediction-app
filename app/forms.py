@@ -11,7 +11,10 @@ class PredictionForm(forms.ModelForm):
             'current_intent', 
             'previous_action', 
             'action_3_hours_ago', 
-            'sleep_quality'
+            'sleep_quality',
+            'device_type',
+            'browser',
+            'os'
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Your Name'}),
@@ -26,5 +29,8 @@ class PredictionForm(forms.ModelForm):
                 ('okay', 'Okay'),
                 ('bad', 'Bad'),
                 ('terrible', 'Terrible')
-            ], attrs={'class': 'form-input'})
+            ], attrs={'class': 'form-input'}),
+            'device_type': forms.HiddenInput(),
+            'browser': forms.HiddenInput(),
+            'os': forms.HiddenInput()
         }

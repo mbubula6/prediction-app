@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="glass-panel main-panel" x-data="{ submitting: false }">
+<div class="glass-panel main-panel" x-data="{ 
+    submitting: false,
+    deviceType: window.innerWidth < 768 ? 'Mobile' : (window.innerWidth < 1024 ? 'Tablet' : 'Desktop'),
+    browserInfo: navigator.userAgent.includes('Chrome') ? 'Chrome' : (navigator.userAgent.includes('Firefox') ? 'Firefox' : (navigator.userAgent.includes('Safari') ? 'Safari' : 'Other')),
+    osInfo: navigator.platform || navigator.userAgent
+}">
     <div class="header">
         <h1>Behavioral <span>Prediction</span></h1>
         <p>Analyze your cognitive context in real-time.</p>
@@ -18,6 +23,10 @@
             <div class="form-group">{{ form.sleep_quality.label_tag }}{{ form.sleep_quality }}</div>
             <div class="form-group">{{ form.preferences.label_tag }}{{ form.preferences }}</div>
         </div>
+        
+        <input type="hidden" name="device_type" :value="deviceType">
+        <input type="hidden" name="browser" :value="browserInfo">
+        <input type="hidden" name="os" :value="osInfo">
         
         <button type="submit" class="primary-btn" :class="{ 'loading': submitting }" :disabled="submitting">
             <span x-show="!submitting">Initialize Prediction</span>

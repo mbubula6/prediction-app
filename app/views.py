@@ -19,9 +19,9 @@ def predict(request):
             features = [
                 mock_hash(user_input.current_intent),
                 mock_hash(user_input.sleep_quality),
-                mock_hash(user_input.previous_action),
+                mock_hash(user_input.previous_action) + mock_hash(user_input.device_type), # Environment factor
                 mock_hash(user_input.action_3_hours_ago),
-                mock_hash(user_input.gender)
+                mock_hash(user_input.gender) + mock_hash(user_input.os) # Environment factor
             ]
             
             # Use random forest by default
