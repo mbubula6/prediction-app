@@ -37,11 +37,17 @@ In addition to manual input, the system collects contextual metadata:
 - Current date
 - Current time
 - Season / part of the year
-- Weather (optional – via weather API)
-- Temperature
-- User location (optional, if enabled)
+- Weather (via Open-Meteo API & Alpine.js Geolocation)
+- Temperature (via Open-Meteo API)
+- User location (via Geolocation API)
 - Device type (phone / tablet / laptop / desktop)
-- Browser and OS (optional)
+- Browser and OS (via navigator metadata)
+
+---
+
+### UI Customization (Mode Switch)
+
+The UI supports a dynamic Light / Dark Mode switch, heavily utilizing CSS Variables and a Glassmorphism design system. State is synced to `localStorage` via Alpine.js.
 
 ---
 
