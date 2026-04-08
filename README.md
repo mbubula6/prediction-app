@@ -1,171 +1,101 @@
-# 🧠 Behavioral Prediction Web App (Django + ML)
+# 🧠 BehavioGraph: Context-Aware Prediction Engine
 
-## 📌 Project Overview
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Django](https://img.shields.io/badge/Django-6.0-092E20?logo=django)
+![Machine Learning](https://img.shields.io/badge/scikit--learn-Enabled-F7931E?logo=scikit-learn)
 
-This project is a web-based application built with **Django** that collects user input and contextual metadata to generate behavioral predictions using multiple machine learning models.
-
-The goal of the application is to analyze user-provided information along with environmental and device-based metadata to predict:
-
-- The user's current motivational state
-- Suggested future actions
-- How the user might fill out the form one hour later
-- Potential behavioral trends
+**BehavioGraph** is an advanced, context-aware monolithic web application that analyzes behavioral inputs and real-time environmental metadata to generate dynamic psychological predictions. By unifying an interactive frontend with an autonomous machine learning backend, it provides continuous insight into a user's motivational state.
 
 ---
 
-## 🚀 How It Works
+## ✨ Core Features
 
-### 1️⃣ User Input (Frontend Form)
+### 🔐 Multi-Tenant Architecture
+- Complete user authentication and isolation (Registration, Login, Authorization).
+- Users independently build their own database of behavioral history.
 
-When a user visits the site, they are presented with a form that collects:
+### 🤖 Intelligent Machine Learning Pipeline
+- **Dual-Model Inference:** The system dynamically trains two distinct `RandomForest` classifiers using the Django ORM natively via Pandas.
+  - **Personalized Mode:** Inference drawn strictly from your individual habits traversing your own history nodes.
+  - **Global Mode:** A collective model trained collaboratively on all system users' anonymized entries.
+- **Asynchronous Training:** Submitting a form dispatches a silent background thread to instantly re-train the models on the freshest dataset.
 
-- Name
-- Gender
-- Preferences (to be extended later)
-- Questions such as:
-  - What do you want to do right now?
-  - What were you doing before entering this site?
-  - What were you doing 3 hours ago?
-  - Did you sleep well today?
+### 🌍 Passive Context Harvesting
+BehavioGraph doesn't just listen to what you say; it listens to your environment:
+- **Location & Weather:** Seamlessly taps your browser's Geolocation API to fetch live weather conditions and temperatures via the [Open-Meteo API](https://open-meteo.com/).
+- **Device & OS:** Automatically extracts and hashes your specific Operating System, Browser engine, and Device dimensions into the analytical pipeline.
 
----
+### 🏎️ Blazing Fast Frontend (No SPA required)
+- **HTMX Driven:** All submissions, forms, and results are swapped seamlessly within the DOM. It achieves true Single-Page Application (SPA) speed while operating purely on standard Django backend templates.
+- **Micro-Interactions:** Leverages **Alpine.js** for handling lightweight UI state, form loading animations, and dynamic metadata toggles.
+- **Chart.js Visualizations:** Review your personalized chronological history through dynamic graphical distributions.
 
-### 2️⃣ Automatic Metadata Collection
-
-In addition to manual input, the system collects contextual metadata:
-
-- Current date
-- Current time
-- Season / part of the year
-- Weather (via Open-Meteo API & Alpine.js Geolocation)
-- Temperature (via Open-Meteo API)
-- User location (via Geolocation API)
-- Device type (phone / tablet / laptop / desktop)
-- Browser and OS (via navigator metadata)
+### 🎨 Premium UI/UX
+- **Glassmorphism Design:** A meticulously crafted interface featuring frosted glass panels, smooth hover interactions, and floating ambient orbs.
+- **Persistent Theme Toggles:** A fully implemented Light/Dark mode switch bound seamlessly to your browser's `localStorage`.
 
 ---
 
-### UI Customization (Mode Switch)
+## 🚀 Quick Start
 
-The UI supports a dynamic Light / Dark Mode switch, heavily utilizing CSS Variables and a Glassmorphism design system. State is synced to `localStorage` via Alpine.js.
+### 1. Requirements
+- Python 3.10+
+- Environment packages: `django`, `scikit-learn`, `xgboost`, `pandas`, `numpy`
 
----
+### 2. Installation
+Clone the repository and initialize your environment:
+```bash
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows use: .\venv\Scripts\activate
 
-### 3️⃣ Backend Processing
+# Install dependencies
+pip install -r requirements.txt
+```
 
-All collected data is sent to the Django backend, where it is:
+### 3. Database initialization
+```bash
+# Apply Django migrations
+python manage.py makemigrations
+python manage.py migrate
+```
 
-1. Cleaned and preprocessed
-2. Transformed into model-ready features
-3. Sent to the selected machine learning model
-
----
-
-### 4️⃣ Model Selection
-
-Users can choose which model to use for prediction:
-
-- 🌲 Random Forest (RF)
-- 📈 Logistic Regression (LR)
-- 🧠 Classical Classifier (CL)
-- ⚡ XGBoost
-
-All models are trained beforehand and stored for inference.
-
----
-
-### 5️⃣ Prediction Output
-
-After form submission, the user receives:
-
-- 🔮 A behavioral prediction
-- 💬 A generated text response
-- ⏳ A forecast of how they might fill out the form one hour later
-- 🎯 Suggested motivational direction
+### 4. Run the Engine
+```bash
+# Start the development server
+python manage.py runserver
+```
+Navigate to `http://127.0.0.1:8000`, register for a new account, and begin building your behavioral dataset!
 
 ---
 
-## 🏗️ Tech Stack
-
-- **Backend:** Django
-- **Frontend:** Django Templates / HTML / CSS / JS
-- **Machine Learning:** scikit-learn, XGBoost
-- **Database:** SQLite / PostgreSQL (configurable)
-- **Optional APIs:** Weather API
-
----
-## 📂 Project Structure
+## 📂 Project Architecture
 
 ```
-project/
+prediction-app/
 │
-├── app/
-│   ├── models.py
-│   ├── views.py
-│   ├── forms.py
-│   ├── ml_models/
-│   │   ├── random_forest.pkl
-│   │   ├── logistic_regression.pkl
-│   │   ├── classifier.pkl
-│   │   └── xgboost.pkl
+├── app/                        # Main Django App
+│   ├── models.py               # Database schemas (UserInput, Auth integration)
+│   ├── views.py                # Core Python logic and HTMX endpoints
+│   ├── forms.py                # Django ModelForms w/ Hidden Alpine metadata vectors
+│   ├── ml_pipeline.py          # The core Pandas/Scikit-Learn async trainer
+│   └── ml_models/              # Directory holding real-time serialized .pkl models
+│
+├── static/
+│   └── style.css               # Centralized Glassmorphism and UI definitions
 │
 ├── templates/
-├── static/
-├── manage.py
-└── README.md
+│   ├── base.html               # Master layout containing Alpine & Nav logic
+│   ├── index.html              # The Prediction engine and Global/Personal ML toggles
+│   ├── history.html            # The Chart.js historical dashboard
+│   └── registration/           # Authentication endpoints (login, register)
+│
+└── prediction_project/         # Django Core Configuration
 ```
----
-
-## 🧪 Model Training (Concept)
-
-Models are trained using:
-
-- User input history
-- Time-based features
-- Weather and seasonal data
-- Device behavior patterns
-
-Future improvements may include:
-
-- Continuous learning
-- User-specific personalization
-- Deep learning models
-- NLP-based input processing
-
----
-
-## 🔮 Future Improvements
-
-- Authentication system
-- User history dashboard
-- Visualization of predictions over time
-- Real-time retraining pipeline
-- Advanced feature engineering
-- Mood or productivity tracking
-
-## 📊 Project Vision
-
-This project explores the intersection of:
-
-- Behavioral prediction
-- Context-aware systems
-- Machine learning model comparison
-- Human motivation modeling
-
-It serves both as:
-
-- A machine learning experimentation platform
-- A behavioral analytics prototype
 
 ---
 
 ## 📄 License
+This project is open-source and licensed under the MIT License.
 
-MIT License
-
----
-
-## 👨‍💻 Author
-
-mbubula6 
-2026
+*Initiated & developed by mbubula6 (2026)*
