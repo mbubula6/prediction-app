@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class UserInput(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     # Form Data
     name = models.CharField(max_length=100)
     gender = models.CharField(max_length=50, blank=True, null=True)
