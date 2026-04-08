@@ -1,6 +1,8 @@
 import os
 import sys
 import pickle
+import hashlib
+import threading
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -21,14 +23,14 @@ os.makedirs(MODELS_DIR, exist_ok=True)
 
 def mock_hash(string_val):
     if not string_val: return 0.5
-    return (hash(str(string_val)) % 100) / 100.0
+    return int(hashlib.md5(str(string_val).lower().encode()).hexdigest()[:8], 16) / 4294967295.0
 
 def extract_features_and_labels(queryset):
     """
     Converts a Django QuerySet into X and y arrays.
-    Returns X, y. If less than 5 rows, returns None, None.
+    Returns X, y. If less than 1 row, returns None, None.
     """
-    if queryset.count() < 5:
+    if queryset.count() < 1:
         return None, None
         
     X = []

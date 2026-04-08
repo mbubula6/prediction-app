@@ -4,7 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import PredictionForm
 from .models import UserInput
-from .ml_pipeline import get_prediction
+from .ml_pipeline import get_prediction, retrain_models, mock_hash
+import threading
 
 @login_required(login_url='/login/')
 def index(request):
@@ -27,10 +28,6 @@ def predict(request):
             user_input = form.save(commit=False)
             user_input.user = request.user
             
-            # Simple feature hashing for Dummy ML
-            def mock_hash(string_val):
-                return (hash(str(string_val)) % 100) / 100.0
-                
             features = [
                 mock_hash(user_input.current_intent),
                 mock_hash(user_input.sleep_quality),
@@ -55,6 +52,9 @@ def predict(request):
             user_input.suggested_action = outcome["action"]
             user_input.forecast_1hr = outcome["forecast"]
             user_input.save()
+            
+            # Trigger background retrain so the next prediction incorporates this new data!
+            threading.Thread(target=retrain_models).start()
             
             context = {
                 'prediction': user_input.predicted_state,
