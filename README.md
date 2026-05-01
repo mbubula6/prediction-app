@@ -8,6 +8,19 @@
 
 ---
 
+## Visuals
+
+### Landing Page
+<img width="1901" height="1076" alt="landing" src="https://github.com/user-attachments/assets/cf24be38-b694-4f1b-a755-030177bbf04e" />
+
+### Input
+<img width="1899" height="1079" alt="input" src="https://github.com/user-attachments/assets/3e16463c-feeb-4071-bfa7-7c6aa622f875" />
+
+### Prediction
+<img width="1895" height="1079" alt="prediction" src="https://github.com/user-attachments/assets/16ff60a8-000f-4602-96e2-3424f1a94846" />
+
+---
+
 ## ✨ Core Features
 
 ### 🔐 Multi-Tenant Architecture
